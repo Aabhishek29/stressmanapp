@@ -1,9 +1,46 @@
 import Image from "next/image"
+import React, { useState } from "react";
+import Logo from './assets/loading-for-react.gif';
+import Link from "next/link";
 
 function signup(){
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [showLoading, setShowLoading] = useState(false);
+  const [error, setError] = useState(false);
 
-  const createUser = () => {
-    
+  const createUser = async () => {
+    setShowLoading(true);
+    setError(false);
+    try {
+      const response = await fetch('http://localhost:8081/addUsers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "name": name,
+          "emailId": email,
+          "password": password,
+          "phoneNumber": phoneNumber
+        }),
+      });
+
+      if (response.ok) {
+        const jsonData = await response.json();
+        console.log(`the responce value is ${jsonData}`);
+        return <Link href={'/'} />
+      } else {
+        console.log('Error: ' + response.status);
+        setError(true);
+      }
+    } catch (error) {
+      console.log('Error: ' + error);
+      setError(true);
+    }
+    setShowLoading(false);
   }
 
     return <div>
@@ -14,16 +51,18 @@ function signup(){
       <form onSubmit={createUser}>
         <div>
             <label >
-                <input className="input" type="name" placeholder="Name"/><br></br>
-                <input className="input" type="number" placeholder="Contact No"/><br></br>
-                <input className="input" type="email" placeholder="Email"/><br></br>
-                <input className="input" type="passsword" placeholder="Password"/>
+                <input className='input' type={'text'} autoComplete="mr.unknown" placeholder={'Enter Your Name'} onChange={e => setName(e.target.value)}/><br></br>
+                <input className='input' type={'email'} autoComplete="example@text.com" placeholder={'Enter Your Email'} onChange={e => setEmail(e.target.value)}/><br></br>
+                <input className='input' type={'text'} autoComplete="00000-00000" placeholder={'Enter Your Phone'} onChange={e => setPhoneNumber(e.target.value)}/><br></br>
+                <input className='input' type={'password'} placeholder={'Enter Your Password'} onChange={e => setPassword(e.target.value)}/><br></br>
             </label>
+            {( error && <label>Please enter valid credentials</label> )}
         </div>
         <div>
-            <button className="w-[300px] mt-[20px] ml-[600px] h-[45px] rounded bg-[#ECD3F7] text-[20px] py-3 font-semibold">
+            {( !showLoading && <button className="w-[300px] mt-[20px] ml-[600px] h-[45px] rounded bg-[#ECD3F7] text-[20px] py-3 font-semibold">
               <h1 className="mt-[-5px]">  Sign Up</h1>
-            </button>
+            </button> )}
+            {( showLoading && <Image className="w-[50px] mt-[20px] ml-[720px] h-[50px]" src={Logo} alt="someting went wrong"></Image>)}
         </div>
       </form>
 
