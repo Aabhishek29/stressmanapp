@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components{
+    .input {
+        @apply w-[300px] h-[30px] mt-[30px] ml-[600px] rounded bg-[#FAD9F7] placeholder-[#7B0CA8];
+    }
+
+    
+}
